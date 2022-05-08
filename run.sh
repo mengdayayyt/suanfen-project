@@ -1,0 +1,1 @@
+python main.py --dataset cora --seed 42 --epoch 100 --lr 1e-2 --wd 5e-4 --dp 0.5
