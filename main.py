@@ -8,6 +8,7 @@ from torch_geometric.datasets import Planetoid, WebKB, WikipediaNetwork
 import pdb
 from configs import args
 from models.gcn import GCNNet
+from models.gcn import transformnet
 from utils import set_seed_global, cal_accuracy
 
 if __name__ == '__main__':
@@ -34,10 +35,10 @@ if __name__ == '__main__':
     val_mask = data.val_mask
     test_mask = data.test_mask
     # Create model, optimizer, loss function,
-    model = GCNNet(in_dim=data.num_node_features,
+    model = transformnet(in_dim=data.num_node_features,
                    hidden_dim=args.hidden_dim,
                    out_dim=dataset.num_classes,
-                   dropout=args.dp).to(device)
+                  dropout=args.dp).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(),
                                  lr=args.lr,
@@ -53,19 +54,19 @@ if __name__ == '__main__':
             model.train()
             optimizer.zero_grad()
             output = model(data.x, data.edge_index)
-            loss_t = loss(output[train_mask], data.y[train_mask])
+            loss_t = loss(output[train_mask[:,2]], data.y[train_mask[:,2]])
             loss_t.backward()
             optimizer.step()
             pred = output.argmax(dim=1)
-            train_acc = cal_accuracy(pred, data.y, train_mask)
+            train_acc = cal_accuracy(pred, data.y, train_mask[:,1])
             with torch.no_grad():
                 model.eval()
                 output = model(data.x, data.edge_index)
-                loss_t = loss(output[val_mask], data.y[val_mask])
+                loss_t = loss(output[val_mask[:,2]], data.y[val_mask[:,2]])
                 val_loss = loss_t
                 pred = output.argmax(dim=1)
-                val_acc = cal_accuracy(pred, data.y, val_mask)
-                test_acc = cal_accuracy(pred, data.y, test_mask)
+                val_acc = cal_accuracy(pred, data.y, val_mask[:,2])
+                test_acc = cal_accuracy(pred, data.y, test_mask[:,2])
             # Print infos
             infos = {
                 'Epoch': epoch,
