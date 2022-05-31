@@ -6,8 +6,7 @@ import pdb
 from utils import set_seed_global
 from configs import args
 from train import train_model
-from models.gcn import GCNNet
-from models.acm_gcn import ACM_GCN, ACM_GCN_Single
+from models.acm_gcn import ACM_GCN
 
 if __name__ == '__main__':
     print(args)
@@ -32,8 +31,11 @@ if __name__ == '__main__':
 
     # Create model
     # model for Texas
-    model = ACM_GCN_Single(in_dim=data.num_node_features,
-                           out_dim=dataset.num_classes).to(device)
+    model = ACM_GCN(in_dim=data.num_node_features,
+                    out_dim=dataset.num_classes,
+                    hidden_dim=args.hidden_dim,
+                    mix=True,
+                    dropout=args.dp).to(device)
     # Train model
     if args.dataset in ["texas"]:
         """model = ACM_GCN(in_dim=data.num_node_features,

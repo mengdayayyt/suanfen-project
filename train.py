@@ -1,11 +1,10 @@
 import torch
 import torch.nn as nn
-import torch_geometric.transforms as T
 
 from tqdm import tqdm
 
 from configs import args
-from utils import set_seed_global, cal_accuracy
+from utils import cal_accuracy
 
 
 def train_model(model, data, train_mask, val_mask, test_mask):
