@@ -34,21 +34,18 @@ if __name__ == '__main__':
     model = ACM_GCN(in_dim=data.num_node_features,
                     out_dim=dataset.num_classes,
                     hidden_dim=args.hidden_dim,
-                    mix=True,
+                    mix=False,
+                    improve=True,
                     dropout=args.dp).to(device)
     # Train model
-    if args.dataset in ["texas"]:
-        """model = ACM_GCN(in_dim=data.num_node_features,
-                        hidden_dim=args.hidden_dim,
-                        out_dim=dataset.num_classes,
-                        dropout=args.dp).to(device)"""
-        texas_test_acc = []
+    if args.dataset in ["texas", "chameleon"]:
+        val_test_acc = []
         for i in range(10):
-            print("TEXAS: Training on mask {}.".format(i + 1))
+            print("{}: Training on mask {}.".format(args.dataset.capitalize(), i + 1))
             train_mask = data.train_mask[:, i]
             val_mask = data.val_mask[:, i]
             test_mask = data.test_mask[:, i]
-            texas_test_acc.append(train_model(model, data, train_mask, val_mask, test_mask))
-        print("TEXAS: Average test_acc {:.3}".format(sum(texas_test_acc) / 10))
+            val_test_acc.append(train_model(model, data, train_mask, val_mask, test_mask))
+        print("{}: Average test_acc {:.3}".format(args.dataset.capitalize(), sum(val_test_acc) / 10))
     else:
         train_model(model, data, data.train_mask, data.val_mask, data.test_mask)

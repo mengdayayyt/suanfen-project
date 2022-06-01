@@ -28,3 +28,7 @@ class ACM_GCN(nn.Module):
             x = self.acm2(x, edge_index)
         return F.log_softmax(x, dim=1)
 
+
+class A_ACM_GCN(nn.Module):
+    def __init__(self):
+        super(A_ACM_GCN, self).__init__()
