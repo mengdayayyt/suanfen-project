@@ -6,12 +6,12 @@ import pdb
 from utils import set_seed_global
 from configs import args
 from train import train_model
-from models.acm_gcn import ACM_GCN
+from models.acm_gcn import ACM_GCN, ACM_GAT
 
 if __name__ == '__main__':
     print(args)
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     set_seed_global(args.seed)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # Fetch datasets, data, and masks
     if args.dataset in ['cora']:
@@ -34,9 +34,16 @@ if __name__ == '__main__':
     model = ACM_GCN(in_dim=data.num_node_features,
                     out_dim=dataset.num_classes,
                     hidden_dim=args.hidden_dim,
-                    mix=False,
-                    improve=True,
+                    mix=True,
+                    improve=False,
                     dropout=args.dp).to(device)
+
+    """model = ACM_GAT(in_dim=data.num_node_features,
+                    out_dim=dataset.num_classes,
+                    hidden_dim=args.hidden_dim,
+                    mix=True,
+                    improve=False,
+                    dropout=args.dp).to(device)"""
     # Train model
     if args.dataset in ["texas", "chameleon"]:
         val_test_acc = []
