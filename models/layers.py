@@ -13,7 +13,6 @@ class ACM_GCN_Filter(MessagePassing):
             add_self_loops: bool = True, normalize: bool = True,
             **kwargs
     ):
-        kwargs.setdefault("aggr", "add")
         super(ACM_GCN_Filter, self).__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -66,7 +65,6 @@ class ACM_GAT_Filter(MessagePassing):
                     add_self_loops: bool = True,
                     **kwargs
                 ):
-        kwargs.setdefault("aggr", "add")
         super(ACM_GAT_Filter, self).__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -155,9 +153,11 @@ class HighOrder_ACM_GCN_Filter(MessagePassing):
             return x - aggr
         elif self.filterbank == "LP":
             return aggr
-        elif self.filterbank == "HP2":
-            return x - self.propagate(edge_index, x=aggr, edge_weight=edge_weight, size=None)
-        elif self.filterbank == "LP2":
+        elif self.filterbank == "HP2HP":
+            return x - 2 * aggr + self.propagate(edge_index, x=aggr, edge_weight=edge_weight, size=None)
+        elif self.filterbank == "LP2LP":
             return self.propagate(edge_index, x=aggr, edge_weight=edge_weight, size=None)
+        elif self.filterbank == "HP2LP" or self.filterbank == "LP2HP":
+            return aggr - self.propagate(edge_index, x=aggr, edge_weight=edge_weight, size=None)
 
         raise ValueError("Invalid Filterbank Name")

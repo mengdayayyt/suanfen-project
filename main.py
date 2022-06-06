@@ -32,22 +32,22 @@ if __name__ == '__main__':
 
     # Create model
     # model for Texas
-    """model = ACM_GNN(in_dim=data.num_node_features,
+    model = ACM_GNN(in_dim=data.num_node_features,
                     out_dim=dataset.num_classes,
                     hidden_dim=args.hidden_dim,
                     ACM_Framework=HighOrder_ACM_Framework,
                     ACM_Filter=HighOrder_ACM_GCN_Filter,
                     mix=True,
                     improve=False,
-                    dropout=args.dp).to(device)"""
-    model = ACM_GNN(in_dim=data.num_node_features,
+                    dropout=args.dp).to(device)
+    """model = ACM_GNN(in_dim=data.num_node_features,
                     out_dim=dataset.num_classes,
                     hidden_dim=args.hidden_dim,
                     ACM_Framework=ACM_Framework,
                     ACM_Filter=ACM_GCN_Filter,
                     mix=True,
                     improve=False,
-                    dropout=args.dp).to(device)
+                    dropout=args.dp).to(device)"""
     # Train model
     if args.dataset in ["texas", "chameleon"]:
         val_test_acc = []

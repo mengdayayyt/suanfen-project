@@ -55,8 +55,9 @@ class HighOrder_ACM_Framework(nn.Module):
         self.HP = ACM_Filter(in_dim, out_dim, filterbank="HP")
         self.LP = ACM_Filter(in_dim, out_dim, filterbank="LP")
         self.I = ACM_Filter(in_dim, out_dim, filterbank="I")
-        self.HP2 = ACM_Filter(in_dim, out_dim, filterbank="HP2")
-        self.LP2 = ACM_Filter(in_dim, out_dim, filterbank="LP2")
+        self.HP2HP = ACM_Filter(in_dim, out_dim, filterbank="HP2HP")
+        self.LP2LP = ACM_Filter(in_dim, out_dim, filterbank="LP2LP")
+        # self.HP2LP = ACM_Filter(in_dim, out_dim, filterbank="HP2LP")
 
         self.mix = mix
         self.T = temprature
@@ -65,27 +66,29 @@ class HighOrder_ACM_Framework(nn.Module):
 
         self.lin_h = nn.Linear(out_dim, 1)
         self.lin_l = nn.Linear(out_dim, 1)
-        self.lin_h2 = nn.Linear(out_dim, 1)
-        self.lin_l2 = nn.Linear(out_dim, 1)
+        self.lin_h2h = nn.Linear(out_dim, 1)
+        self.lin_l2l = nn.Linear(out_dim, 1)
+        # self.lin_h2l = nn.Linear(out_dim, 1)
         self.lin_i = nn.Linear(out_dim, 1)
 
     def forward(self, x, edge_index):
         H_hp = F.relu(self.HP(x, edge_index))
         H_lp = F.relu(self.LP(x, edge_index))
-        H_hp2 = F.relu(self.HP2(x, edge_index))
-        H_lp2 = F.relu(self.LP2(x, edge_index))
+        H_hp2 = F.relu(self.HP2HP(x, edge_index))
+        H_lp2 = F.relu(self.LP2LP(x, edge_index))
         H_i = F.relu(self.I(x, edge_index))
 
         alpha_h = torch.sigmoid(self.lin_h(H_hp))
         alpha_l = torch.sigmoid(self.lin_l(H_lp))
-        alpha_h2 = torch.sigmoid(self.lin_h2(H_hp2))
-        alpha_l2 = torch.sigmoid(self.lin_l2(H_lp2))
+        alpha_h2 = torch.sigmoid(self.lin_h2h(H_hp2))
+        alpha_l2 = torch.sigmoid(self.lin_l2l(H_lp2))
         alpha_i = torch.sigmoid(self.lin_i(H_i))
 
         if self.mix:
             hli = torch.cat([alpha_i, alpha_h, alpha_l, alpha_h2, alpha_l2], dim=1)
             hli = F.softmax(self.lin_mix(hli) / self.T, dim=1)
-            alpha_i, alpha_h, alpha_l, alpha_h2, alpha_l2 = hli[:, 0], hli[:, 1], hli[:, 2], hli[:, 3], hli[:, 4]
+            alpha_i, alpha_h, alpha_l, alpha_h2, alpha_l2 = \
+                hli[:, 0], hli[:, 1], hli[:, 2], hli[:, 3], hli[:, 4]
         else:
             alpha_h, alpha_l, alpha_i, alpha_h2, alpha_l2 = \
                 alpha_h[:, 0], alpha_l[:, 0], alpha_i[:, 0], alpha_h2[:, 0], alpha_l2[:, 0]
