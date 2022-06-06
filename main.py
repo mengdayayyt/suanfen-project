@@ -6,7 +6,8 @@ import pdb
 from utils import set_seed_global
 from configs import args
 from train import train_model
-from models.acm_gcn import ACM_GCN, ACM_GAT
+from models.acm import ACM_Framework, HighOrder_ACM_Framework, ACM_GNN
+from models.layers import ACM_GCN_Filter, ACM_GAT_Filter, HighOrder_ACM_GCN_Filter
 
 if __name__ == '__main__':
     print(args)
@@ -31,19 +32,22 @@ if __name__ == '__main__':
 
     # Create model
     # model for Texas
-    model = ACM_GCN(in_dim=data.num_node_features,
+    """model = ACM_GNN(in_dim=data.num_node_features,
                     out_dim=dataset.num_classes,
                     hidden_dim=args.hidden_dim,
-                    mix=True,
-                    improve=False,
-                    dropout=args.dp).to(device)
-
-    """model = ACM_GAT(in_dim=data.num_node_features,
-                    out_dim=dataset.num_classes,
-                    hidden_dim=args.hidden_dim,
+                    ACM_Framework=HighOrder_ACM_Framework,
+                    ACM_Filter=HighOrder_ACM_GCN_Filter,
                     mix=True,
                     improve=False,
                     dropout=args.dp).to(device)"""
+    model = ACM_GNN(in_dim=data.num_node_features,
+                    out_dim=dataset.num_classes,
+                    hidden_dim=args.hidden_dim,
+                    ACM_Framework=ACM_Framework,
+                    ACM_Filter=ACM_GCN_Filter,
+                    mix=True,
+                    improve=False,
+                    dropout=args.dp).to(device)
     # Train model
     if args.dataset in ["texas", "chameleon"]:
         val_test_acc = []
