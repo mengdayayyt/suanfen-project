@@ -7,7 +7,7 @@ from models.layers import ACM_GCN_Filter
 class ACM_Framework(nn.Module):
     def __init__(
             self, in_dim, out_dim, ACM_Filter: type,
-            mix: bool = False, temprature: float = 3.0
+            mix: bool = True, temprature: float = 3.0
     ):
         super().__init__()
         self.HP = ACM_Filter(in_dim, out_dim, filterbank="HP")
@@ -49,7 +49,7 @@ class ACM_Framework(nn.Module):
 class HighOrder_ACM_Framework(nn.Module):
     def __init__(
             self, in_dim, out_dim, ACM_Filter: type,
-            mix: bool = False, temprature: float = 3.0
+            mix: bool = True, temprature: float = 3.0
     ):
         super().__init__()
         self.HP = ACM_Filter(in_dim, out_dim, filterbank="HP")
@@ -104,11 +104,12 @@ class HighOrder_ACM_Framework(nn.Module):
 
 class ACM_GNN(nn.Module):
     def __init__(
-                    self, in_dim, out_dim, hidden_dim: int = 64,
-                    ACM_Framework: type = ACM_Framework, ACM_Filter: type = ACM_GCN_Filter,
-                    dropout: float = 0.5, improve: bool = False, mix: bool = False
-                ):
+            self, in_dim, out_dim, hidden_dim: int = 64,
+            ACM_Framework: type = ACM_Framework, ACM_Filter: type = ACM_GCN_Filter,
+            dropout: float = 0.5, improve: bool = False, mix: bool = True, name: str = "ACM_GNN"
+    ):
         super().__init__()
+        self.name = name
         self.acm, self.acm2 = None, None
 
         if improve:
@@ -127,5 +128,3 @@ class ACM_GNN(nn.Module):
             x = F.relu(x)
             x = self.acm2(x, edge_index)
         return F.log_softmax(x, dim=1)
-
-
