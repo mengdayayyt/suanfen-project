@@ -19,5 +19,7 @@ arg_parser.add_argument('--lr', type=float, default=1e-3)
 arg_parser.add_argument('--wd', type=float, default=1e-5)
 # Dropout probability
 arg_parser.add_argument('--dp', type=float, default=0.5)
+# Experiment: 0 None; 1 Test ACM in all params; 2 Compare ACM-GCN with GCN
+arg_parser.add_argument('--experiment', type=int, default=0)
 
 args = arg_parser.parse_args()
